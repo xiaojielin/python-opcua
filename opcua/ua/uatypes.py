@@ -683,7 +683,8 @@ class Variant(FrozenClass):
     Create an OPC-UA Variant object.
     if no argument a Null Variant is created.
     if not variant type is given, attemps to guess type from python type
-    if a variant is given as value, the new objects becomes a copy of the argument
+    if a variant is given as value, the new objects becomes a copy of the argument.
+    its type has to be from the VariantType Class, such as VariantType.Int64 or .Float. Double or .Variant
 
     :ivar Value:
     :vartype Value: Any supported type
