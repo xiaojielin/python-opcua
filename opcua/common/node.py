@@ -189,7 +189,7 @@ class Node(object):
         res = self.get_attribute(ua.AttributeIds.ValueRank)
         return res.Value.Value
 
-    def set_value(self, value, varianttype=None):
+    def set_value(self, value, varianttype=None, includeTime=True):
         """
         Set value of a node. Only variables(properties) have values.
         An exception will be generated for other node types.
@@ -201,16 +201,20 @@ class Node(object):
         WARNING: On server side, ref to object is directly saved in our UA db, if this is a mutable object
         and you modfy it afterward, then the object in db will be modified without any
         data change event generated
+        * 20190416 Lin: add an option. some servers do not allow a combination of timestep and value. therefore,
+        * includeTime should be false.
         """
         datavalue = None
         if isinstance(value, ua.DataValue):
             datavalue = value
         elif isinstance(value, ua.Variant):
             datavalue = ua.DataValue(value)
-            datavalue.SourceTimestamp = datetime.utcnow()
+            if includeTime:
+                datavalue.SourceTimestamp = datetime.now()
         else:
             datavalue = ua.DataValue(ua.Variant(value, varianttype))
-            datavalue.SourceTimestamp = datetime.utcnow()
+            if includeTime:
+                datavalue.SourceTimestamp = datetime.now()
         self.set_attribute(ua.AttributeIds.Value, datavalue)
 
     set_data_value = set_value
@@ -469,6 +473,11 @@ class Node(object):
         result = result[0]
         result.StatusCode.check()
         # FIXME: seems this method may return several nodes
+        # FIXME: the reason is that the "path" variable does not differentiate signals of same type such as analog\
+        # signals. however, it is more straightforward to use this method to find pure variables such as control\
+        # variables which is kinda of unique. it is recommended to use this method to quickly find the control vars
+        # however, if one is familiar with nodeId, one could also completely avoid this method.
+
         return Node(self.server, result.Targets[0].TargetId)
 
     def _make_relative_path(self, path):

@@ -15,6 +15,8 @@ class SubHandler(object):
     """
     Subscription Handler. To receive events from server for a subscription
     This class is just a sample class. Whatever class having these methods can be used
+    This should not be taken as a place for intensive calculation. users should generate other similar classes
+    to do the analysis work. this class works on threading process and thus shall be kept as simple as possible.
     """
 
     def data_change(self, handle, node, val, attr):

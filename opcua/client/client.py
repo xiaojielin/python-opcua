@@ -484,6 +484,9 @@ class Client(object):
     def get_server_node(self):
         return self.get_node(ua.FourByteNodeId(ua.ObjectIds.Server))
 
+    def get_view_node(self):
+        return self.get_node(ua.FourByteNodeId(ua.ObjectIds.ViewsFolder))
+
     def get_node(self, nodeid):
         """
         Get node using NodeId object or a string representing a NodeId
